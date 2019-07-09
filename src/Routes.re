@@ -10,11 +10,10 @@ type url = {
 let handleClick = (_event) => Js.log("clicked!");
 
 [@react.component]
-let make = (~message) => {
+let make = () => {
   let url = ReasonReactRouter.useUrl();
-  Js.log(url);
 
-  <div onClick={handleClick}>
-    {ReasonReact.string(message)}
-  </div>;
+  switch (url.path) {
+  | _ => <NomatchScreen />
+  };
 }
