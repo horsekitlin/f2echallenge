@@ -14,6 +14,9 @@ let make = () => {
   let url = ReasonReactRouter.useUrl();
 
   switch (url.path) {
+  | ["pomodoro", "dashboard"] => <PomodoroDashboard />
+  | ["pomodoro", "report"] => <PomodoroReport />
+  | ["pomodoro", taskId] => <PomodoroScreen taskId=taskId />
   | _ => <NomatchScreen />
   };
 }

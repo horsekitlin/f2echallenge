@@ -17,5 +17,6 @@
   "bs-dependencies": [
     "reason-react"
   ],
+  "ppx-flags": [],
   "refmt": 3
 }

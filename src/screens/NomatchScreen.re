@@ -1,6 +1,6 @@
 [@react.component]
 let make = () => {
   <div>
-    {ReasonReact.string("no match view")}
+    {ReasonReact.string("no screen")}
   </div>;
 }
