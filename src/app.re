@@ -17,6 +17,6 @@ let make = () => {
   | ["pomodoro", "dashboard"] => <PomodoroDashboard />
   | ["pomodoro", "report"] => <PomodoroReport />
   | ["pomodoro", taskId] => <PomodoroScreen taskId=taskId />
-  | _ => <NomatchScreen />
+  | _ => <HomeScreen />
   };
 }

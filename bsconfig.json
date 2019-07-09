@@ -1,22 +1,19 @@
-
 {
-  "name": "react-hooks-template",
-  "reason": {
-    "react-jsx": 3
-  },
+  "name": "reason-scripts",
+  "ppx-flags": [],
   "sources": {
     "dir" : "src",
     "subdirs" : true
   },
-  "package-specs": [{
+  "bs-dependencies": ["reason-react", "@glennsl/bs-jest", "bs-fetch"],
+  "reason": {
+    "react-jsx": 3
+  },
+  "refmt": 3,
+  "namespace": true,
+  "package-specs": {
     "module": "commonjs",
     "in-source": true
-  }],
-  "suffix": ".bs.js",
-  "namespace": true,
-  "bs-dependencies": [
-    "reason-react"
-  ],
-  "ppx-flags": [],
-  "refmt": 3
+  },
+  "suffix": ".bs.js"
 }
