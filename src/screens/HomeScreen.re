@@ -1,10 +1,15 @@
 [@react.component]
 let make = () => {
+  let publicurl = [%raw {|
+    process.env.PUBLIC_URL
+  |}];
+
+  Js.log(publicurl);
   <div>
     <header>
       <label htmlFor="drawer-checkbox" className="button drawer-toggle"></label>
-      <a href="/" className="logo">{ReasonReact.string("f2echallenge")}</a>
-      <a href="/pomodoro/dashboard" className="button">{ReasonReact.string("w1-pomodoro")}</a>
+      <a href={publicurl ++ "/"} className="logo">{ReasonReact.string("f2echallenge")}</a>
+      <a href={publicurl ++ "/pomodoro/dashboard"} className="button">{ReasonReact.string("w1-pomodoro")}</a>
       <span>{ReasonReact.string("|")}</span>
     </header>
     <div className="container">
