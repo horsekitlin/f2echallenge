@@ -4,7 +4,6 @@ let make = () => {
     process.env.PUBLIC_URL
   |}];
 
-  Js.log(publicurl);
   <div>
     <header>
       <label htmlFor="drawer-checkbox" className="button drawer-toggle"></label>
