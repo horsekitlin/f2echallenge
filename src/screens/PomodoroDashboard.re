@@ -28,7 +28,24 @@ let make = () => {
   | _ => state
   }, {todos: []});
 
-  <div>
-    {ReasonReact.string("Pomodoro dashboard screen")}
-  </div>
+  <NavgationWrapper>
+    <div className="tabs">
+      <input type_="radio" name="tab-group" id="tab1" checked=true ariaHidden=true />
+      <label htmlFor="tab1" ariaHidden=true>{ReasonReact.string("Tab 1")}</label>
+      <div>
+        <h3>{ReasonReact.string("Tab 1 content")}</h3>
+      </div>
+      
+      <input type_="radio" name="tab-group" id="tab2" ariaHidden=true />
+      <label htmlFor="tab2" ariaHidden=true>{ReasonReact.string("Tab 2")}</label>
+      <div>
+        <h3>{ReasonReact.string("Tab 2 content")}</h3>
+      </div>
+      <input type_="radio" name="tab-group" id="tab3" ariaHidden=true />
+      <label htmlFor="tab3" ariaHidden=true>{ReasonReact.string("Tab 3")}</label>
+      <div>
+        <h3>{ReasonReact.string("Tab 1 content")}</h3>
+      </div>
+    </div>
+  </NavgationWrapper>;
 }
