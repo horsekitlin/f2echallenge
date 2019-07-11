@@ -1,3 +1,4 @@
+
 type statusType =
   | LOW
   | MID
@@ -36,6 +37,7 @@ let make = () => {
         switch (action) {
         | ADD_TODO(text) => {...state, todos: [makeTodoItem(text), ...state.todos]}
         | CHANGE_TEXT(text) => {...state, text}
+        | DELETE_TODO(index) => {...state, todos: []}
         | _ => state
         },
       {todos: [], text: ""},
