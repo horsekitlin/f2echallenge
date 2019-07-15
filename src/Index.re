@@ -1,5 +1,5 @@
-Uitls.require("mini.css");
-Uitls.require("./index.css");
+Utils.require("mini.css");
+Utils.require("./index.css");
 
 [@bs.module "./serviceWorker"]
 external register_service_worker : unit => unit = "register";
