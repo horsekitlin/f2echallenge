@@ -20,6 +20,7 @@ type action =
 
 type state = {
   todos: list(todoItem),
+  doneTodos: list(todoItem),
   text: string,
 };
 
@@ -33,6 +34,7 @@ let basicItem = {
 
 let makeTodoItem = (text: string): todoItem => {...basicItem, title: text};
 
+let perTodos = Localstorage.getTodos();
 
 [@react.component]
 let make = () => {
@@ -40,36 +42,34 @@ let make = () => {
     React.useReducer(
       (state, action) =>
         switch (action) {
-        | ADD_TODO(text) => 
-          text === "" 
-            ? state
-            : ({
+        | ADD_TODO(text) => {
+          text === "" ? state: {
+            let todos = [makeTodoItem(text), ...state.todos];
+            Localstorage.saveTodos(todos);
+            {
               ...state,
               text: "",
-              todos: [makeTodoItem(text), ...state.todos],
-            })
+              todos
+            }
+          };
+        }
         | DELETE_TODO(index) => {
             ...state,
-            todos: Uitls.removeInListByIndex(index, state.todos),
+            todos: Utils.removeInListByIndex(index, state.todos),
           }
         | EDIT_TODO(index, nextItem) => {
             ...state,
-            todos: Uitls.setElementAt(~index, ~value=nextItem, state.todos),
+            todos: Utils.setElementAt(~index, ~value=nextItem, state.todos),
           }
         | CHANGE_TEXT(text) => {...state, text}
         | _ => state
         },
-      {
-        todos: [],
-        text: "",
-      },
+      {todos: perTodos, text: "", doneTodos: []},
     );
 
-  let handleDeleteTodo = 
-    (index:int) =>
-      (evnet: ReactEvent.Mouse.t) => {
-        dispatch(DELETE_TODO(index));
-      };
+  let handleDeleteTodo = (index: int, evnet: ReactEvent.Mouse.t) => {
+    dispatch(DELETE_TODO(index));
+  };
 
   <NavgationWrapper>
     <div className="container fluid">
@@ -89,19 +89,48 @@ let make = () => {
           {ReasonReact.string({j|新增|j})}
         </button>
       </div>
-      <div className="row">
-        <ul className="col-sm-12">
-          {React.array(
-             Array.of_list(List.mapi(
-               (index, todo) => 
-                <PomodoroItem
-                  index={index}
-                  title={todo.title}
-                  handleDeleteTodo={handleDeleteTodo}
-                />, state.todos)),
-           )}
-        </ul>
+      <div className="col-sm-12 card fluid">
+        <div className="section">
+          <h3> {ReasonReact.string("Todo")} </h3>
+        </div>
       </div>
+      {React.array(
+         Array.of_list(
+           List.mapi(
+             (index, todo) =>
+               <PomodoroItem
+                 index
+                 title={todo.title}
+                 handleDeleteTodo
+                 handleTodoDetail={_evnet =>
+                   ReasonReactRouter.push("/pomodoro/1")
+                 }
+               />,
+             state.todos,
+           ),
+         ),
+       )}
+      <div className="col-sm-12 card fluid">
+        <div className="section">
+          <h3> {ReasonReact.string("Done")} </h3>
+        </div>
+      </div>
+      {React.array(
+         Array.of_list(
+           List.mapi(
+             (index, todo) =>
+               <PomodoroItem
+                 index
+                 title={todo.title}
+                 handleDeleteTodo
+                 handleTodoDetail={_evnet =>
+                   ReasonReactRouter.push("/pomodoro/1")
+                 }
+               />,
+             state.todos,
+           ),
+         ),
+       )}
     </div>
   </NavgationWrapper>;
 };
