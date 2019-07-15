@@ -42,17 +42,14 @@ let make = () => {
     React.useReducer(
       (state, action) =>
         switch (action) {
-        | ADD_TODO(text) => {
-          text === "" ? state: {
-            let todos = [makeTodoItem(text), ...state.todos];
-            Localstorage.saveTodos(todos);
-            {
-              ...state,
-              text: "",
-              todos
+        | ADD_TODO(text) =>
+          text === ""
+            ? state
+            : {
+              let todos = [makeTodoItem(text), ...state.todos];
+              Localstorage.saveTodos(todos);
+              {...state, text: "", todos};
             }
-          };
-        }
         | DELETE_TODO(index) => {
             ...state,
             todos: Utils.removeInListByIndex(index, state.todos),
@@ -89,48 +86,53 @@ let make = () => {
           {ReasonReact.string({j|新增|j})}
         </button>
       </div>
-      <div className="col-sm-12 card fluid">
-        <div className="section">
-          <h3> {ReasonReact.string("Todo")} </h3>
+      <div className="row">
+        <div className="col-sm-6">
+          <div className="col-sm-12 card fluid">
+            <div className="section">
+              <h3> {ReasonReact.string("Todo")} </h3>
+            </div>
+          </div>
+          {React.array(
+             Array.of_list(
+               List.mapi(
+                 (index, todo) =>
+                   <PomodoroItem
+                     index
+                     title={todo.title}
+                     handleDeleteTodo
+                     handleTodoDetail={_evnet =>
+                       ReasonReactRouter.push("/pomodoro/1")
+                     }
+                   />,
+                 state.todos,
+               ),
+             ),
+           )}
+          <div className="col-sm-12 card fluid">
+            <div className="section">
+              <h3> {ReasonReact.string("Done")} </h3>
+            </div>
+          </div>
+          {React.array(
+             Array.of_list(
+               List.mapi(
+                 (index, todo) =>
+                   <PomodoroItem
+                     index
+                     title={todo.title}
+                     handleDeleteTodo
+                     handleTodoDetail={_evnet =>
+                       ReasonReactRouter.push("/pomodoro/1")
+                     }
+                   />,
+                 state.todos,
+               ),
+             ),
+           )}
         </div>
+        <PomodoroCountdown />
       </div>
-      {React.array(
-         Array.of_list(
-           List.mapi(
-             (index, todo) =>
-               <PomodoroItem
-                 index
-                 title={todo.title}
-                 handleDeleteTodo
-                 handleTodoDetail={_evnet =>
-                   ReasonReactRouter.push("/pomodoro/1")
-                 }
-               />,
-             state.todos,
-           ),
-         ),
-       )}
-      <div className="col-sm-12 card fluid">
-        <div className="section">
-          <h3> {ReasonReact.string("Done")} </h3>
-        </div>
-      </div>
-      {React.array(
-         Array.of_list(
-           List.mapi(
-             (index, todo) =>
-               <PomodoroItem
-                 index
-                 title={todo.title}
-                 handleDeleteTodo
-                 handleTodoDetail={_evnet =>
-                   ReasonReactRouter.push("/pomodoro/1")
-                 }
-               />,
-             state.todos,
-           ),
-         ),
-       )}
     </div>
   </NavgationWrapper>;
 };
