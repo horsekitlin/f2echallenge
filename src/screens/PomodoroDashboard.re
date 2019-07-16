@@ -98,6 +98,7 @@ let make = () => {
                List.mapi(
                  (index, todo) =>
                    <PomodoroItem
+                     key={"todo-" ++ string_of_int(index)}
                      index
                      title={todo.title}
                      handleDeleteTodo
@@ -119,14 +120,15 @@ let make = () => {
                List.mapi(
                  (index, todo) =>
                    <PomodoroItem
-                     index
-                     title={todo.title}
-                     handleDeleteTodo
-                     handleTodoDetail={_evnet =>
-                       ReasonReactRouter.push("/pomodoro/1")
+                      key={"doneTodos-" ++ string_of_int(index)}
+                      index
+                      title={todo.title}
+                      handleDeleteTodo
+                      handleTodoDetail={_evnet =>
+                      ReasonReactRouter.push("/pomodoro/1")
                      }
                    />,
-                 state.todos,
+                 state.doneTodos,
                ),
              ),
            )}
