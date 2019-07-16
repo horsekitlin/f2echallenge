@@ -36,7 +36,6 @@ let make = (~taskId: string) => {
         text: "",
       },
     );
-    Js.log(List.length(state.todos));
   <div>
     {ReasonReact.string("Pomodoro screen task id: " ++ taskId)}
   </div>

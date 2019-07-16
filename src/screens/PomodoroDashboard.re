@@ -64,7 +64,7 @@ let make = () => {
       {todos: perTodos, text: "", doneTodos: []},
     );
 
-  let handleDeleteTodo = (index: int, evnet: ReactEvent.Mouse.t) => {
+  let handleDeleteTodo = (index: int, evnet_: ReactEvent.Mouse.t) => {
     dispatch(DELETE_TODO(index));
   };
 
