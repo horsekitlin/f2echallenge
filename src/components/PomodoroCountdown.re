@@ -9,6 +9,7 @@ type status =
 
 type action =
   | TogglePlay(string)
+  | Tick
   | Done
   | Reset;
 
@@ -37,21 +38,23 @@ let make = () => {
       (state, action) =>
         switch (action) {
         | TogglePlay(status) => {...state, status}
+        | Tick => {...state, timeLeft: state.timeLeft - 1}
         | _ => state
         },
       {timeLeft: 300, status: "pause", mode: Pomodoro, play: false},
     );
 
+  let handleTooglePlay = (status, event_) => dispatch(TogglePlay(status));
   <div className="col-sm-6 fluid">
     <div className="row">
       <p> {ReasonReact.string({j|開始專心|j})} </p>
     </div>
-    <div className="row">
-      <div className="bordered circular">
-        <p> {state.timeLeft |> convertedTime |> ReasonReact.string} </p>
-      </div>
-    </div>
-    <div className="row"> <ActionButton status={state.status} handleTooglePlay={(status) => (event_) => dispatch(TogglePlay(status))} /> </div>
+    <CountdownBlock
+      handleTooglePlay
+      handleTick={_event => dispatch(Tick)}
+      status={state.status}
+      timeLeft={state.timeLeft |> convertedTime}
+    />
     <div className="row">
       <div className="col-sm-8 bordered">
         // <input type_="checkbox" />
