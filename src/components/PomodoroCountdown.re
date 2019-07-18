@@ -1,7 +1,6 @@
-type mode =
+type modeType =
   | Pomodoro
-  | ShortBreak
-  | LongBreak;
+  | Break;
 
 type status =
   | Start
@@ -9,6 +8,7 @@ type status =
 
 type action =
   | TogglePlay(string)
+  | ChangeMode
   | Tick
   | Done
   | Reset;
@@ -16,20 +16,22 @@ type action =
 type state = {
   timeLeft: int,
   status: string,
-  mode,
+  mode: modeType,
   play: bool,
 };
 
-let formatTime = (time: int) =>
-  time < 10 ? "0" ++ string_of_int(time) : string_of_int(time);
-
-let convertedTime = seconds => {
-  let minutes = seconds / 60;
-  let secondsRemaining = seconds mod 60;
-  let minutesRemaining = minutes mod 60;
-
-  formatTime(minutesRemaining) ++ ":" ++ formatTime(secondsRemaining);
+let getNextMode = (mode) => switch mode {
+| Pomodoro => Break
+| Break => Pomodoro
 };
+
+let getNextTimeLeft = mode =>
+  switch (mode) {
+  | Pomodoro => 1500
+  | Break => 300
+  };
+
+let tickTimeLeft = (status, timeLeft) => status === "pause"? timeLeft: timeLeft - 1;
 
 [@react.component]
 let make = () => {
@@ -38,22 +40,39 @@ let make = () => {
       (state, action) =>
         switch (action) {
         | TogglePlay(status) => {...state, status}
-        | Tick => {...state, timeLeft: state.timeLeft - 1}
+        | ChangeMode => {
+          let nextMode = state.mode === Break ? Pomodoro : Break;
+          let nextTimeLeft = getNextTimeLeft(nextMode);
+          {...state, mode: nextMode, timeLeft: nextTimeLeft};
+        }
+        | Tick =>
+          let {timeLeft, status, mode} = state;
+          let shouldChangeMode = timeLeft === 0;
+          let nextMode = shouldChangeMode ?  getNextMode(mode): mode;
+          let nextStatus = shouldChangeMode ? "pause": status;
+          let nextTimeLeft = shouldChangeMode?  getNextTimeLeft(mode): tickTimeLeft(status, timeLeft);
+          {
+            ...state,
+            status: nextStatus,
+            mode: nextMode,
+            timeLeft: nextTimeLeft
+          };
         | _ => state
         },
-      {timeLeft: 300, status: "pause", mode: Pomodoro, play: false},
+      {timeLeft: getNextTimeLeft(Pomodoro), status: "pause", mode: Pomodoro, play: false},
     );
 
   let handleTooglePlay = (status, event_) => dispatch(TogglePlay(status));
+
   <div className="col-sm-6 fluid">
     <div className="row">
       <p> {ReasonReact.string({j|開始專心|j})} </p>
     </div>
     <CountdownBlock
       handleTooglePlay
-      handleTick={_event => dispatch(Tick)}
+      handleCountdown={(event_) => dispatch(Tick)}
       status={state.status}
-      timeLeft={state.timeLeft |> convertedTime}
+      timeLeft={state.timeLeft}
     />
     <div className="row">
       <div className="col-sm-8 bordered">
