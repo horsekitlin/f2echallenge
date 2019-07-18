@@ -1,25 +1,27 @@
 type statusType =
   | LOW
-  | MID
+  | MIDDLE
   | HIGH
   | URGENT;
 
 type todoItem = {
   processingTime: int,
   status: statusType,
-  priority: string,
+  pauseCount: int,
   title: string,
-  annotation: string,
 };
 
 type action =
   | CHANGE_TEXT(string)
   | ADD_TODO(string)
   | EDIT_TODO(int, todoItem)
-  | DELETE_TODO(int);
+  | WATCH_TODO(int)
+  | DELETE_TODO(int)
+  | CHANGE_STATUS(string);
 
 type state = {
   todos: list(todoItem),
+  watchIndex: int,
   doneTodos: list(todoItem),
   text: string,
 };
@@ -27,13 +29,17 @@ type state = {
 let basicItem = {
   processingTime: 0,
   status: LOW,
-  priority: "",
+  pauseCount: 0,
   title: "",
-  annotation: "",
 };
 
 let makeTodoItem = (text: string): todoItem => {...basicItem, title: text};
-
+let parseStatusString = (status) => switch status {
+| LOW => "Low"
+| MIDDLE => "Middle"
+| HIGH => "High"
+| URGENT => "Urgent"
+};
 let perTodos = Localstorage.getTodos();
 
 [@react.component]
@@ -42,6 +48,7 @@ let make = () => {
     React.useReducer(
       (state, action) =>
         switch (action) {
+        | WATCH_TODO(index) => {...state, watchIndex: index}
         | ADD_TODO(text) =>
           text === ""
             ? state
@@ -51,9 +58,10 @@ let make = () => {
               {...state, text: "", todos};
             }
         | DELETE_TODO(index) => {
-            ...state,
-            todos: Utils.removeInListByIndex(index, state.todos),
-          }
+          let nextTodos = Utils.removeInListByIndex(index, state.todos);
+          Localstorage.saveTodos(nextTodos);
+          { ...state, todos: nextTodos}
+        }
         | EDIT_TODO(index, nextItem) => {
             ...state,
             todos: Utils.setElementAt(~index, ~value=nextItem, state.todos),
@@ -61,13 +69,14 @@ let make = () => {
         | CHANGE_TEXT(text) => {...state, text}
         | _ => state
         },
-      {todos: perTodos, text: "", doneTodos: []},
+      {todos: perTodos, text: "", watchIndex: -1, doneTodos: []},
     );
 
   let handleDeleteTodo = (index: int, evnet_: ReactEvent.Mouse.t) => {
     dispatch(DELETE_TODO(index));
   };
 
+  let handleChangeStatus = (status: string) => dispatch(CHANGE_STATUS(status));
   <NavgationWrapper>
     <div className="container fluid">
       <div className="row input-group fluid">
@@ -98,10 +107,12 @@ let make = () => {
                List.mapi(
                  (index, todo) =>
                    <PomodoroItem
+                    index
+                     handleChangeStatus
                      key={"todo-" ++ string_of_int(index)}
-                     index
                      title={todo.title}
                      handleDeleteTodo
+                     todoStatus={parseStatusString(todo.status)}
                      handleTodoDetail={_evnet =>
                        ReasonReactRouter.push("/pomodoro/1")
                      }
@@ -122,7 +133,9 @@ let make = () => {
                    <PomodoroItem
                       key={"doneTodos-" ++ string_of_int(index)}
                       index
+                      handleChangeStatus
                       title={todo.title}
+                      todoStatus={parseStatusString(todo.status)}
                       handleDeleteTodo
                       handleTodoDetail={_evnet =>
                       ReasonReactRouter.push("/pomodoro/1")

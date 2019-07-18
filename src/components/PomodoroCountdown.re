@@ -20,10 +20,11 @@ type state = {
   play: bool,
 };
 
-let getNextMode = (mode) => switch mode {
-| Pomodoro => Break
-| Break => Pomodoro
-};
+let getNextMode = mode =>
+  switch (mode) {
+  | Pomodoro => Break
+  | Break => Pomodoro
+  };
 
 let getNextTimeLeft = mode =>
   switch (mode) {
@@ -31,7 +32,8 @@ let getNextTimeLeft = mode =>
   | Break => 300
   };
 
-let tickTimeLeft = (status, timeLeft) => status === "pause"? timeLeft: timeLeft - 1;
+let tickTimeLeft = (status, timeLeft) =>
+  status === "pause" ? timeLeft : timeLeft - 1;
 
 [@react.component]
 let make = () => {
@@ -40,26 +42,32 @@ let make = () => {
       (state, action) =>
         switch (action) {
         | TogglePlay(status) => {...state, status}
-        | ChangeMode => {
+        | ChangeMode =>
           let nextMode = state.mode === Break ? Pomodoro : Break;
           let nextTimeLeft = getNextTimeLeft(nextMode);
           {...state, mode: nextMode, timeLeft: nextTimeLeft};
-        }
         | Tick =>
           let {timeLeft, status, mode} = state;
           let shouldChangeMode = timeLeft === 0;
-          let nextMode = shouldChangeMode ?  getNextMode(mode): mode;
-          let nextStatus = shouldChangeMode ? "pause": status;
-          let nextTimeLeft = shouldChangeMode?  getNextTimeLeft(mode): tickTimeLeft(status, timeLeft);
+          let nextMode = shouldChangeMode ? getNextMode(mode) : mode;
+          let nextStatus = shouldChangeMode ? "pause" : status;
+          let nextTimeLeft =
+            shouldChangeMode
+              ? getNextTimeLeft(mode) : tickTimeLeft(status, timeLeft);
           {
             ...state,
             status: nextStatus,
             mode: nextMode,
-            timeLeft: nextTimeLeft
+            timeLeft: nextTimeLeft,
           };
         | _ => state
         },
-      {timeLeft: getNextTimeLeft(Pomodoro), status: "pause", mode: Pomodoro, play: false},
+      {
+        timeLeft: getNextTimeLeft(Pomodoro),
+        status: "pause",
+        mode: Pomodoro,
+        play: false,
+      },
     );
 
   let handleTooglePlay = (status, event_) => dispatch(TogglePlay(status));
@@ -70,7 +78,7 @@ let make = () => {
     </div>
     <CountdownBlock
       handleTooglePlay
-      handleCountdown={(event_) => dispatch(Tick)}
+      handleCountdown={event_ => dispatch(Tick)}
       status={state.status}
       timeLeft={state.timeLeft}
     />
