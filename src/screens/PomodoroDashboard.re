@@ -17,7 +17,7 @@ type action =
   | EDIT_TODO(int, todoItem)
   | WATCH_TODO(int)
   | DELETE_TODO(int)
-  | CHANGE_STATUS(string);
+  | CHANGE_STATUS(int, statusType);
 
 type state = {
   todos: list(todoItem),
@@ -40,6 +40,12 @@ let parseStatusString = (status) => switch status {
 | HIGH => "High"
 | URGENT => "Urgent"
 };
+let parseStatusType = (status) => switch status {
+  | "Low" => LOW
+  | "Middle" => MIDDLE
+  | "High" => HIGH
+  | "Urgent" => URGENT
+};
 let perTodos = Localstorage.getTodos();
 
 [@react.component]
@@ -49,6 +55,15 @@ let make = () => {
       (state, action) =>
         switch (action) {
         | WATCH_TODO(index) => {...state, watchIndex: index}
+        | CHANGE_STATUS(index, status) => {
+          let nextTodos = List.mapi((i, t) => {
+            index === i
+              ? {...t, status}
+              : t;
+          }, state.todos);
+          Localstorage.saveTodos(nextTodos);
+          {...state, todos: nextTodos}
+        }
         | ADD_TODO(text) =>
           text === ""
             ? state
@@ -75,8 +90,11 @@ let make = () => {
   let handleDeleteTodo = (index: int, evnet_: ReactEvent.Mouse.t) => {
     dispatch(DELETE_TODO(index));
   };
+  let handleChangeStatus = (index:int, status: string, _event_) => {
+    let nextStatus = parseStatusType(status);
+    dispatch(CHANGE_STATUS(index, nextStatus));
+  };
 
-  let handleChangeStatus = (status: string) => dispatch(CHANGE_STATUS(status));
   <NavgationWrapper>
     <div className="container fluid">
       <div className="row input-group fluid">
@@ -108,7 +126,7 @@ let make = () => {
                  (index, todo) =>
                    <PomodoroItem
                     index
-                     handleChangeStatus
+                     handleChangeStatus={handleChangeStatus}
                      key={"todo-" ++ string_of_int(index)}
                      title={todo.title}
                      handleDeleteTodo
@@ -130,17 +148,7 @@ let make = () => {
              Array.of_list(
                List.mapi(
                  (index, todo) =>
-                   <PomodoroItem
-                      key={"doneTodos-" ++ string_of_int(index)}
-                      index
-                      handleChangeStatus
-                      title={todo.title}
-                      todoStatus={parseStatusString(todo.status)}
-                      handleDeleteTodo
-                      handleTodoDetail={_evnet =>
-                      ReasonReactRouter.push("/pomodoro/1")
-                     }
-                   />,
+                   <p>{"dont todo" |> ReasonReact.string}</p>,
                  state.doneTodos,
                ),
              ),

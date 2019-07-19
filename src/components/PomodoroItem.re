@@ -18,28 +18,28 @@ let make =
       <p> {title |> ReasonReact.string} </p>
       <div className="button-group">
         <button
-          onClick={_event_ => handleChangeStatus("Low")}
+          onClick={handleChangeStatus(index, "Low")}
           className={
             pickClasses(todoStatus, "Low") |> Js.Array.joinWith(" ")
           }>
           {"Low" |> ReasonReact.string}
         </button>
         <button
-          onClick={_event_ => handleChangeStatus("Middle")}
+          onClick={handleChangeStatus(index, "Middle")}
           className={
             pickClasses(todoStatus, "Middle") |> Js.Array.joinWith(" ")
           }>
           {"Middle" |> ReasonReact.string}
         </button>
         <button
-          onClick={_event_ => handleChangeStatus("High")}
+          onClick={handleChangeStatus(index, "High")}
           className={
             pickClasses(todoStatus, "High") |> Js.Array.joinWith(" ")
           }>
           {"High" |> ReasonReact.string}
         </button>
         <button
-          onClick={_event_ => handleChangeStatus("Urgent")}
+          onClick={handleChangeStatus(index, "Urgent")}
           className={
             pickClasses(todoStatus, "Urgent") |> Js.Array.joinWith(" ")
           }>
