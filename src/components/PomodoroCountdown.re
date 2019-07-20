@@ -28,7 +28,7 @@ let getNextMode = mode =>
 
 let getNextTimeLeft = mode =>
   switch (mode) {
-  | Pomodoro => 1500
+  | Pomodoro => 3
   | Break => 300
   };
 
@@ -41,7 +41,7 @@ module EmptyView = {
 };
 
 [@react.component]
-let make = (~watchIndex, ~handleAddPauseCount) => {
+let make = (~watchIndex, ~handleAddPauseCount, ~handleDoneTodo) => {
   let (state, dispatch) =
     React.useReducer(
       (state, action) =>
@@ -63,9 +63,13 @@ let make = (~watchIndex, ~handleAddPauseCount) => {
           let shouldChangeMode = timeLeft === 0;
           let nextMode = shouldChangeMode ? getNextMode(mode) : mode;
           let nextStatus = shouldChangeMode ? "pause" : status;
-          let nextTimeLeft =
-            shouldChangeMode
-              ? getNextTimeLeft(mode) : tickTimeLeft(status, timeLeft);
+          let nextTimeLeft = switch nextMode {
+          | Break => 
+            handleDoneTodo(watchIndex);
+            getNextTimeLeft(mode);
+          | Pomodoro => tickTimeLeft(status, timeLeft);
+          };
+
           {
             ...state,
             status: nextStatus,

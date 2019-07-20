@@ -17,6 +17,7 @@ type action =
   | EDIT_TODO(int, todoItem)
   | WATCH_TODO(int)
   | DELETE_TODO(int)
+  | DONE_TODO(int)
   | ADD_PAUSE_COUNT(int, todoItem)
   | CHANGE_STATUS(int, statusType);
 
@@ -47,6 +48,7 @@ let parseStatusType = statusStr =>
   };
 
 let perTodos = Localstorage.getTodos();
+let perDoneTodos = Localstorage.getDoneTodos();
 
 [@react.component]
 let make = () => {
@@ -76,6 +78,13 @@ let make = () => {
               Localstorage.saveTodos(todos);
               {...state, text: "", todos};
             }
+        | DONE_TODO(index) =>
+          let todo = List.nth(state.todos, index);
+          let nextTodos = Utils.removeInListByIndex(index, state.todos);
+          let doneTodos = [todo, ...state.doneTodos];
+          Localstorage.saveTodos(nextTodos);
+          Localstorage.saveDoneTodos(doneTodos);
+          {...state, todos: nextTodos, doneTodos: doneTodos};
         | DELETE_TODO(index) =>
           let nextTodos = Utils.removeInListByIndex(index, state.todos);
           Localstorage.saveTodos(nextTodos);
@@ -87,10 +96,10 @@ let make = () => {
         | CHANGE_TEXT(text) => {...state, text}
         | _ => state
         },
-      {todos: perTodos, text: "", watchIndex: (-1), doneTodos: []},
+      {todos: perTodos, text: "", watchIndex: (-1), doneTodos: perDoneTodos},
     );
 
-  let handleDeleteTodo = (index: int, evnet_: ReactEvent.Mouse.t) => {
+  let handleDeleteTodo = (index: int, _evnet_: ReactEvent.Mouse.t) => {
     dispatch(DELETE_TODO(index));
   };
   let handleAddPauseCount = (index: int) => {
@@ -100,6 +109,10 @@ let make = () => {
   };
   let handleWatchTodo = (index: int, _event_) => {
     dispatch(WATCH_TODO(index));
+  };
+  let handleDoneTodo = (index: int) => {
+    Js.log("handleDoneTodo");
+    dispatch(DONE_TODO(index));
   };
   let handleChangeStatus = (index: int, status: string, _event_) => {
     let nextStatus = parseStatusType(status);
@@ -167,7 +180,11 @@ let make = () => {
              ),
            )}
         </div>
-        <PomodoroCountdown handleAddPauseCount watchIndex={state.watchIndex} />
+        <PomodoroCountdown
+          handleAddPauseCount
+          handleDoneTodo
+          watchIndex={state.watchIndex}
+        />
       </div>
     </div>
   </NavgationWrapper>;
