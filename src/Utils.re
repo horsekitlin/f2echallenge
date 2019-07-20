@@ -1,5 +1,12 @@
 [@bs.val] external require: string => unit = "";
 
+let rec getElementAt = (~index: int, l: list('a)) =>
+  switch l {
+  | [] => None
+  | [head, ..._] when index <= 0 => Some(head)
+  | [head, ...tail] => getElementAt(~index=index-1, tail)
+  };
+
 let rec removeByIndex = (~targetIndex: int, index: int, theList: list('a)) => {
   let [head, ...tail] = theList;
 
@@ -11,8 +18,9 @@ let rec removeByIndex = (~targetIndex: int, index: int, theList: list('a)) => {
 };
 
 let removeInListByIndex = (~targetIndex: int, theList: list('a)) => {
-  switch theList {
-  | [] => []
+  switch (List.length(theList)) {
+  | 0 => []
+  | 1 => []
   | _ => removeByIndex(targetIndex, 0, theList)
   };
 };
