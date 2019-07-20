@@ -17,6 +17,7 @@ type action =
   | EDIT_TODO(int, todoItem)
   | WATCH_TODO(int)
   | DELETE_TODO(int)
+  | ADD_PAUSE_COUNT(int, todoItem)
   | CHANGE_STATUS(int, statusType);
 
 type state = {
@@ -42,6 +43,7 @@ let parseStatusType = statusStr =>
   | "Middle" => MIDDLE
   | "High" => HIGH
   | "Urgent" => URGENT
+  | _ => LOW
   };
 
 let perTodos = Localstorage.getTodos();
@@ -53,6 +55,11 @@ let make = () => {
       (state, action) =>
         switch (action) {
         | WATCH_TODO(index) => {...state, watchIndex: index}
+        | ADD_PAUSE_COUNT(index, nextItem) =>
+          let nextTodos =
+            Utils.setElementAt(~index, ~value=nextItem, state.todos);
+          Localstorage.saveTodos(nextTodos);
+          {...state, todos: nextTodos};
         | CHANGE_STATUS(index, status) =>
           let nextTodos =
             List.mapi(
@@ -85,6 +92,11 @@ let make = () => {
 
   let handleDeleteTodo = (index: int, evnet_: ReactEvent.Mouse.t) => {
     dispatch(DELETE_TODO(index));
+  };
+  let handleAddPauseCount = (index: int) => {
+    let todo = List.nth(state.todos, index);
+    let nextTodo = {...todo, pauseCount: todo.pauseCount + 1};
+    dispatch(ADD_PAUSE_COUNT(index, nextTodo));
   };
   let handleWatchTodo = (index: int, _event_) => {
     dispatch(WATCH_TODO(index));
@@ -129,6 +141,7 @@ let make = () => {
                      handleWatchTodo
                      key={"todo-" ++ string_of_int(index)}
                      title={todo.title}
+                     pauseCount={todo.pauseCount}
                      handleDeleteTodo
                      todoStatus={parseStatusString(todo.status)}
                      handleTodoDetail={_evnet =>
@@ -154,7 +167,7 @@ let make = () => {
              ),
            )}
         </div>
-        <PomodoroCountdown watchIndex={state.watchIndex} />
+        <PomodoroCountdown handleAddPauseCount watchIndex={state.watchIndex} />
       </div>
     </div>
   </NavgationWrapper>;

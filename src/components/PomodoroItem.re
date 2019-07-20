@@ -10,6 +10,7 @@ let make =
       ~handleTodoDetail,
       ~index,
       ~title,
+      ~pauseCount,
       ~todoStatus,
       ~handleWatchTodo,
       ~handleChangeStatus,
@@ -17,6 +18,8 @@ let make =
   <div className="col-sm-12 card fluid">
     <div className="section">
       <p> {title |> ReasonReact.string} </p>
+
+      <p>{pauseCount |> string_of_int |> ReasonReact.string}</p>
       <div className="button-group">
         <button
           onClick={handleChangeStatus(index, "Low")}

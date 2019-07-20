@@ -41,12 +41,19 @@ module EmptyView = {
 };
 
 [@react.component]
-let make = (~watchIndex) => {
+let make = (~watchIndex, ~handleAddPauseCount) => {
   let (state, dispatch) =
     React.useReducer(
       (state, action) =>
         switch (action) {
-        | TogglePlay(status) => {...state, status}
+        | TogglePlay(status) => 
+          switch status {
+          | "pause" =>
+            Js.log(status);
+            handleAddPauseCount(watchIndex);
+            {...state, status};
+          | _ => {...state, status};
+          };
         | ChangeMode =>
           let nextMode = state.mode === Break ? Pomodoro : Break;
           let nextTimeLeft = getNextTimeLeft(nextMode);
@@ -75,7 +82,10 @@ let make = (~watchIndex) => {
       },
     );
 
-  let handleTooglePlay = (status, _event_) => dispatch(TogglePlay(status));
+  let handleTooglePlay = (status, _event_) => {
+    dispatch(TogglePlay(status));
+  };
+
   switch (watchIndex) {
   | (-1) => <EmptyView />
   | _ =>
