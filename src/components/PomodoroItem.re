@@ -11,6 +11,7 @@ let make =
       ~index,
       ~title,
       ~todoStatus,
+      ~handleWatchTodo,
       ~handleChangeStatus,
     ) => {
   <div className="col-sm-12 card fluid">
@@ -47,7 +48,7 @@ let make =
         </button>
       </div>
       <div className="section button-group">
-        <button className="tertiary" onClick=handleTodoDetail>
+        <button className="tertiary" onClick={handleWatchTodo(index)}>
           {ReasonReact.string({j|開始|j})}
         </button>
         <button className="secondary" onClick={handleDeleteTodo(index)}>

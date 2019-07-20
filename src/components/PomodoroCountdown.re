@@ -35,8 +35,13 @@ let getNextTimeLeft = mode =>
 let tickTimeLeft = (status, timeLeft) =>
   status === "pause" ? timeLeft : timeLeft - 1;
 
+module EmptyView = {
+  [@react.component]
+  let make = () => <div> {{j|請選擇 Task|j} |> ReasonReact.string} </div>;
+};
+
 [@react.component]
-let make = () => {
+let make = (~watchIndex) => {
   let (state, dispatch) =
     React.useReducer(
       (state, action) =>
@@ -70,25 +75,28 @@ let make = () => {
       },
     );
 
-  let handleTooglePlay = (status, event_) => dispatch(TogglePlay(status));
-
-  <div className="col-sm-6 fluid">
-    <div className="row">
-      <p> {ReasonReact.string({j|開始專心|j})} </p>
-    </div>
-    <CountdownBlock
-      handleTooglePlay
-      handleCountdown={event_ => dispatch(Tick)}
-      status={state.status}
-      timeLeft={state.timeLeft}
-    />
-    <div className="row">
-      <div className="col-sm-8 bordered">
-        // <input type_="checkbox" />
-         <p> {ReasonReact.string({j|專心閱讀|j})} </p> </div>
-      <div className="col-sm-4 bordered">
-        <p> {ReasonReact.string("2019-07-15")} </p>
+  let handleTooglePlay = (status, _event_) => dispatch(TogglePlay(status));
+  switch (watchIndex) {
+  | (-1) => <EmptyView />
+  | _ =>
+    <div className="col-sm-6 fluid">
+      <div className="row">
+        <p> {ReasonReact.string({j|開始專心|j})} </p>
+      </div>
+      <CountdownBlock
+        handleTooglePlay
+        handleCountdown={_event_ => dispatch(Tick)}
+        status={state.status}
+        timeLeft={state.timeLeft}
+      />
+      <div className="row">
+        <div className="col-sm-8 bordered">
+          // <input type_="checkbox" />
+           <p> {ReasonReact.string({j|專心閱讀|j})} </p> </div>
+        <div className="col-sm-4 bordered">
+          <p> {ReasonReact.string("2019-07-15")} </p>
+        </div>
       </div>
     </div>
-  </div>;
+  };
 };

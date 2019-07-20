@@ -26,26 +26,24 @@ type state = {
   text: string,
 };
 
-let basicItem = {
-  processingTime: 0,
-  status: LOW,
-  pauseCount: 0,
-  title: "",
-};
+let basicItem = {processingTime: 0, status: LOW, pauseCount: 0, title: ""};
 
 let makeTodoItem = (text: string): todoItem => {...basicItem, title: text};
-let parseStatusString = (status) => switch status {
-| LOW => "Low"
-| MIDDLE => "Middle"
-| HIGH => "High"
-| URGENT => "Urgent"
-};
-let parseStatusType = (status) => switch status {
+let parseStatusString = status =>
+  switch (status) {
+  | LOW => "Low"
+  | MIDDLE => "Middle"
+  | HIGH => "High"
+  | URGENT => "Urgent"
+  };
+let parseStatusType = statusStr =>
+  switch (statusStr) {
   | "Low" => LOW
   | "Middle" => MIDDLE
   | "High" => HIGH
   | "Urgent" => URGENT
-};
+  };
+
 let perTodos = Localstorage.getTodos();
 
 [@react.component]
@@ -55,15 +53,14 @@ let make = () => {
       (state, action) =>
         switch (action) {
         | WATCH_TODO(index) => {...state, watchIndex: index}
-        | CHANGE_STATUS(index, status) => {
-          let nextTodos = List.mapi((i, t) => {
-            index === i
-              ? {...t, status}
-              : t;
-          }, state.todos);
+        | CHANGE_STATUS(index, status) =>
+          let nextTodos =
+            List.mapi(
+              (i, t) => index === i ? {...t, status} : t,
+              state.todos,
+            );
           Localstorage.saveTodos(nextTodos);
-          {...state, todos: nextTodos}
-        }
+          {...state, todos: nextTodos};
         | ADD_TODO(text) =>
           text === ""
             ? state
@@ -72,11 +69,10 @@ let make = () => {
               Localstorage.saveTodos(todos);
               {...state, text: "", todos};
             }
-        | DELETE_TODO(index) => {
+        | DELETE_TODO(index) =>
           let nextTodos = Utils.removeInListByIndex(index, state.todos);
           Localstorage.saveTodos(nextTodos);
-          { ...state, todos: nextTodos}
-        }
+          {...state, todos: nextTodos};
         | EDIT_TODO(index, nextItem) => {
             ...state,
             todos: Utils.setElementAt(~index, ~value=nextItem, state.todos),
@@ -84,13 +80,16 @@ let make = () => {
         | CHANGE_TEXT(text) => {...state, text}
         | _ => state
         },
-      {todos: perTodos, text: "", watchIndex: -1, doneTodos: []},
+      {todos: perTodos, text: "", watchIndex: (-1), doneTodos: []},
     );
 
   let handleDeleteTodo = (index: int, evnet_: ReactEvent.Mouse.t) => {
     dispatch(DELETE_TODO(index));
   };
-  let handleChangeStatus = (index:int, status: string, _event_) => {
+  let handleWatchTodo = (index: int, _event_) => {
+    dispatch(WATCH_TODO(index));
+  };
+  let handleChangeStatus = (index: int, status: string, _event_) => {
     let nextStatus = parseStatusType(status);
     dispatch(CHANGE_STATUS(index, nextStatus));
   };
@@ -125,8 +124,9 @@ let make = () => {
                List.mapi(
                  (index, todo) =>
                    <PomodoroItem
-                    index
-                     handleChangeStatus={handleChangeStatus}
+                     index
+                     handleChangeStatus
+                     handleWatchTodo
                      key={"todo-" ++ string_of_int(index)}
                      title={todo.title}
                      handleDeleteTodo
@@ -148,13 +148,13 @@ let make = () => {
              Array.of_list(
                List.mapi(
                  (index, todo) =>
-                   <p>{"dont todo" |> ReasonReact.string}</p>,
+                   <p> {"dont todo" |> ReasonReact.string} </p>,
                  state.doneTodos,
                ),
              ),
            )}
         </div>
-        <PomodoroCountdown />
+        <PomodoroCountdown watchIndex={state.watchIndex} />
       </div>
     </div>
   </NavgationWrapper>;
