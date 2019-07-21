@@ -81,11 +81,10 @@ let make = () => {
         | DONE_TODO(index) =>
           let todo = List.nth(state.todos, index);
           let nextTodos = Utils.removeInListByIndex(index, state.todos);
-          Js.log(nextTodos);
           let doneTodos = [todo, ...state.doneTodos];
           Localstorage.saveTodos(nextTodos);
           Localstorage.saveDoneTodos(doneTodos);
-          {...state, todos: nextTodos};
+          {...state, todos: nextTodos, doneTodos, watchIndex: -1};
         | DELETE_TODO(index) =>
           let nextTodos = Utils.removeInListByIndex(index, state.todos);
           Localstorage.saveTodos(nextTodos);
@@ -170,27 +169,27 @@ Js.log(state.doneTodos);
               <h3> {ReasonReact.string("Done")} </h3>
             </div>
           </div>
-          // {React.array(
-          //    Array.of_list(
-          //      List.map(
-          //        (todo) =>
-          //         <div className="col-sm-12 card fluid">
-          //            <p> 
-          //             {todo.title |> ReasonReact.string}
-          //            </p>
-          //            <p>
-          //              {"pause count: " |> ReasonReact.string}
-          //              {todo.pauseCount |> string_of_int |> ReasonReact.string}
-          //            </p>
-          //            <p>
-          //              {"status: " |> ReasonReact.string}
-          //              {todo.status |> parseStatusString |> ReasonReact.string}
-          //            </p>
-          //          </div>,
-          //        state.doneTodos,
-          //      ),
-          //    ),
-          //  )}
+          {React.array(
+             Array.of_list(
+               List.map(
+                 (todo) =>
+                  <div className="col-sm-12 card fluid">
+                     <p> 
+                      {todo.title |> ReasonReact.string}
+                     </p>
+                     <p>
+                       {"pause count: " |> ReasonReact.string}
+                       {todo.pauseCount |> string_of_int |> ReasonReact.string}
+                     </p>
+                     <p>
+                       {"status: " |> ReasonReact.string}
+                       {todo.status |> parseStatusString |> ReasonReact.string}
+                     </p>
+                   </div>,
+                 state.doneTodos,
+               ),
+             ),
+           )}
         </div>
         <PomodoroCountdown
           handleAddPauseCount
