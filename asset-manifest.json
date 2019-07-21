@@ -1,7 +1,7 @@
 {
   "main.css": "/f2echallenge/static/css/main.04972dd7.chunk.css",
-  "main.js": "/f2echallenge/static/js/main.0016c66b.chunk.js",
-  "main.js.map": "/f2echallenge/static/js/main.0016c66b.chunk.js.map",
+  "main.js": "/f2echallenge/static/js/main.aeee58aa.chunk.js",
+  "main.js.map": "/f2echallenge/static/js/main.aeee58aa.chunk.js.map",
   "static/css/1.0e803b56.chunk.css": "/f2echallenge/static/css/1.0e803b56.chunk.css",
   "static/js/1.99d0d84f.chunk.js": "/f2echallenge/static/js/1.99d0d84f.chunk.js",
   "static/js/1.99d0d84f.chunk.js.map": "/f2echallenge/static/js/1.99d0d84f.chunk.js.map",
@@ -10,6 +10,6 @@
   "static/css/main.04972dd7.chunk.css.map": "/f2echallenge/static/css/main.04972dd7.chunk.css.map",
   "static/css/1.0e803b56.chunk.css.map": "/f2echallenge/static/css/1.0e803b56.chunk.css.map",
   "index.html": "/f2echallenge/index.html",
-  "precache-manifest.1a815f6877d7d546c8899c88951a4a27.js": "/f2echallenge/precache-manifest.1a815f6877d7d546c8899c88951a4a27.js",
+  "precache-manifest.976d9c6adb7fb0b7458febd83897864a.js": "/f2echallenge/precache-manifest.976d9c6adb7fb0b7458febd83897864a.js",
   "service-worker.js": "/f2echallenge/service-worker.js"
 }
