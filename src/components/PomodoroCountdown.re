@@ -28,7 +28,7 @@ let getNextMode = mode =>
 
 let getNextTimeLeft = mode =>
   switch (mode) {
-  | Pomodoro => 3
+  | Pomodoro => 1500
   | Break => 300
   };
 
