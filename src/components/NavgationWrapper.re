@@ -12,7 +12,10 @@ let make = (~children) => {
     <header>
       <label htmlFor="drawer-checkbox" className="button drawer-toggle"></label>
       <a href={publicurl ++ "/"} className="logo">{ReasonReact.string("f2echallenge")}</a>
+
       <button onClick=pushPath("/pomodoro/dashboard")>{ReasonReact.string("w1-pomodoro")}</button>
+      <span>{ReasonReact.string("|")}</span>
+      <button onClick=pushPath("/f2echallenge/w2")>{ReasonReact.string("w2-pomodoro")}</button>
       <span>{ReasonReact.string("|")}</span>
     </header>
     <div className="container">

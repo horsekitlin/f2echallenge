@@ -11,6 +11,8 @@ let make = () => {
   let url = ReasonReactRouter.useUrl();
 
   switch (url.path) {
+  | ["f2echallenge", "w2"] => <F2echallengeW2RE show={true} message="myBanner" />
+
   | ["pomodoro", "dashboard"] => <PomodoroDashboard />
   | ["f2echallenge", "pomodoro", "dashboard"] => <PomodoroDashboard />
   | ["pomodoro", "report"] => <PomodoroReport />
