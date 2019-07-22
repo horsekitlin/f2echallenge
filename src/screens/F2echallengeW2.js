@@ -1,8 +1,12 @@
 import React from 'react';
+import styled from 'styled-components';
 
+const StyledDiv = styled.div`
+  background-color: #000;
+`;
 function App() {
   return (
-    <div>
+    <StyledDiv>
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
@@ -18,7 +22,7 @@ function App() {
         <p>
           Learn React
         </p>
-    </div>
+    </StyledDiv>
   );
 }
 
